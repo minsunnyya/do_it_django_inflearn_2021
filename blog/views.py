@@ -10,7 +10,7 @@ class PostList(ListView):
 
 class PostDetail(DetailView):
     model = Post
-   
+
 
 
 
