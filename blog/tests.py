@@ -6,6 +6,24 @@ class TestView(TestCase):
     def setUp(self):
         self.client = Client()
 
+    def navbar_test(self, soup):
+        navbar = soup.nav
+        self.assertIn('Blog', navbar.text)
+        self.assertIn('About Me', navbar.text)
+
+        logo_btn = navbar.find('a', text='Do It Django')
+        self.assertEqual(logo_btn.attrs['href'], '/')
+
+        home_btn = navbar.find('a', text='Home')
+        self.assertEqual(home_btn.attrs['href'],'/')
+
+        blog_btn = navbar.find('a', text='Blog')
+        self.assertEqual(blog_btn.attrs['href'], '/blog/')
+
+
+        about_me_btn = navbar.find('a', text='About Me')
+        self.assertEqual(about_me_btn.attrs['href'], '/about_me/')
+
 
 
     def test_post_list(self):
@@ -16,17 +34,14 @@ class TestView(TestCase):
         # 1.3 페이지의 타이틀의 블로그라는 문구가 있다.
         soup = BeautifulSoup(response.content, 'html.parser')
         self.assertIn('Blog',soup.title.text)
-        # 1.4 네비게이션 바가 있다.
-        navbar = soup.nav
-        # 1.5 블로그 , 어바웃미라는 문구가 네비게이션바가 있다.
-        self.assertIn('Blog', navbar.text)
-        self.assertIn('About Me', navbar.text)
+
+        self.navbar_test(soup)
+
 
         # 2.1 게시물이 하나도 없을 때
         self.assertEqual(Post.objects.count(), 0)
         # 2.2 메인영역에 "아직 게시물이 없습니다"라는 문구가 나온다.
-        main_area = soup.find('div', id='main-area')
-        self.assertIn('아직 게시물이 없습니다.', main_area.text)
+        self.navbar_test(soup)
         # 3.1 만약 게시물이 2개있다면,
         post_001 = Post.objects.create(
             title = '첫번째 포스트입니다.',
@@ -74,5 +89,5 @@ class TestView(TestCase):
         self.assertIn(post_001.title,post_area.text)
         # 2.5 첫 번째 포스트의 작성자가 포스트 영역에 있다.(아직 구현할 수 없음)
         # 2.6 첫 번째 포스트의 내용이 포스트 영역이 있다.
-        self.assertIn(post_001.content, post_area.text)
+        self.assertIn(post_001.content,post_area.text)
 
