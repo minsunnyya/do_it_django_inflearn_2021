@@ -8,13 +8,18 @@
 
 
 <!-- Blog Post -->
-<div class="card mb-4">
+<div class="card mb-4" id="post-{{ p.id }}">
     {% if p.head_image %}
     <img class="card-img-top" src="{{p.head_image.url}}" alt="{{p.title}}">
     {% else %}
     <img class="card-img-top" src="https://picsum.photos/seed/{{ p.id }}/600/200" alt="{{p.title}}">
     {% endif %}
     <div class="card-body">
+        {% if p.category %}
+        <span class="badge badge-secondary float-right">{{p.category}}</span>
+        {% else %}
+         <span class="badge badge-secondary float-right">미분류</span>
+        {% endif %}
         <h2 class="card-title">{{p.title}}</h2>
         {% if p.hook_text %}
         <h5 class="text-muted">{{ p.hook_text }}</h5>
@@ -24,7 +29,7 @@
     </div>
     <div class="card-footer text-muted">
         Posted on {{p.created_at}} 2020 by
-          <a href="#">{{ p.author | upper }}</a>
+        <a href="#">{{ p.author | upper }}</a>
     </div>
 </div>
 
@@ -42,6 +47,6 @@
         <a class="page-link" href="#">Newer &rarr;</a>
     </li>
 </ul>
-</div>
+
 
 {% endblock %}
