@@ -16,11 +16,11 @@
 <!-- Author -->
 <p class="lead">
   by
-  <a href="#">Start Bootstrap</a>
+  <a href="#">{{ post.author | upper }}</a>
 </p>
 
 <hr>
-</div>
+
 
 <!-- Date/Time -->
 <p>Posted on {{ post.created_at }}</p>
@@ -55,6 +55,10 @@
   {{ post.get_file_name }}
 </a>
 {% endif %}
+  <hr>
+</div>
+
+
 <div id="comment-area">
 <!-- Comments Form -->
 <div class="card my-4">
