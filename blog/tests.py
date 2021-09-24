@@ -107,6 +107,8 @@ class TestView(TestCase):
         main_area = soup.find('div', id='main-area')
         self.assertNotIn('아직 게시물이 없습니다', main_area.text)
 
+
+
         post_001_card = main_area.find('div', id='post-1')
         self.assertIn(self.post_001.title, post_001_card.text)
         self.assertIn(self.post_001.category.name, post_001_card.text)
@@ -203,18 +205,28 @@ class TestView(TestCase):
         main_area = soup.find('div', id='main-area')
         self.assertIn('Create a New Post', main_area.text)
 
+        tag_str_input = main_area.find('input', id='id_tags_str')
+        self.assertTrue(tag_str_input)
+
         self.client.post(
             '/blog/create_post/',
-        {
-            'title': 'Post Form 만들기',
-            'content' :'Post Form 페이지를 만듭시다'
-        }
+            {
+                'title': 'Post Form 만들기',
+                'content' :'Post Form 페이지를 만듭시다',
+                'tags_str': 'new tag; 한글 태그,python'
+            }
         )
 
         last_post = Post.objects.last()
         self.assertEqual(last_post.title, 'Post Form 만들기')
         self.assertEqual(last_post.author.username, 'obama')
         self.assertEqual(last_post.content, 'Post Form 페이지를 만듭시다')
+
+        self.assertEqual(last_post.tags.count(), 3)
+        self.assertTrue(Tag.objects.get(name='new tag'))
+        self.assertTrue(Tag.objects.get(name='한글 태그'))
+        self.assertTrue(Tag.objects.get(name='python'))
+        self.assertEqual(Tag.objects.count(), 5)
 
     def test_update_post(self):
         update_post_url = f'/blog/update_post/{self.post_003.pk}/'
