@@ -290,15 +290,15 @@ class TestView(TestCase):
         self.assertIn('Updated: ', comment_001_div.text)
 
     def test_comment_delete(self):
-        comment_bt_trump = Comment.objects.create(
+        comment_by_trump = Comment.objects.create(
             post=self.post_001,
             author=self.user_trump,
-            content='트럼프의 댓글입니다.'
+            content='트럼프의 댓글입니다'
         )
         self.assertEqual(Comment.objects.count(), 2)
-        self.assertEqual(self.post_001.comment_set.count(),2)
+        self.assertEqual(self.post_001.comment_set.count(), 2)
 
-        #로그인 하지 않은 상태
+        # 로그인 하지 않은 상태
         response = self.client.get(self.post_001.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -326,8 +326,7 @@ class TestView(TestCase):
 
         delete_comment_modal_002 = soup.find('div', id='deleteCommentModal-2')
         self.assertIn('Are You Sure?', delete_comment_modal_002.text)
-
-        really_delete_btn_002 = delete_comment_modal_002('a')
+        really_delete_btn_002 = delete_comment_modal_002.find('a')
         self.assertIn('Delete', really_delete_btn_002.text)
         self.assertEqual(really_delete_btn_002.attrs['href'], '/blog/delete_comment/2/')
 
@@ -337,7 +336,7 @@ class TestView(TestCase):
 
         self.assertIn(self.post_001.title, soup.title.text)
         comment_area = soup.find('div', id='comment-area')
-        self.assertNotIn('트럼프의 댓글입니다, comment_area.text')
+        self.assertNotIn('트럼프의 댓글입니다', comment_area.text)
 
         self.assertEqual(Comment.objects.count(), 1)
         self.assertEqual(self.post_001.comment_set.count(), 1)
@@ -382,7 +381,7 @@ class TestView(TestCase):
             '/blog/create_post/',
             {
                 'title': 'Post Form 만들기',
-                'content' :'Post Form 페이지를 만듭시다',
+                'content': 'Post Form 페이지를 만듭시다',
                 'tags_str': 'new tag; 한글 태그,python'
             }
         )
@@ -447,3 +446,22 @@ class TestView(TestCase):
         self.assertIn('한글 태그', main_area.text)
         self.assertIn('some tag', main_area.text)
         self.assertNotIn('python', main_area.text)
+
+    def test_search(self):
+        post_about_python = Post.objects.create(
+            title='파이썬에 대한 포스트입니다.',
+            content='Hello World, We are the world',
+            author=self.user_trump
+        )
+
+        response = self.client.get('/blog/search/파이썬/')
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        main_area = soup.find('div', id='main-area')
+
+        self.assertIn('Search:파이썬(2)', main_area.text)
+        self.assertNotIn(self.post_001.title, main_area.text)
+        self.assertNotIn(self.post_002.title, main_area.text)
+        self.assertIn(self.post_003.title, main_area.text)
+        self.assertIn(post_about_python.title, main_area.text)

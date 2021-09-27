@@ -101,7 +101,6 @@
         <div class="media-body">
             {% if user.is_authenticated and comment.author == user %}
             <div class="float-right">
-
                 <a class="btn btn-sm btn-info"
                    role="button"
                    id="comment-{{ comment.pk }}-update-btn"
@@ -115,7 +114,7 @@
             </div>
 
             <!-- Modal {{ comment.pk }} -->
-            <div class="modal fade" id="deleteCommentModal-2 -{{ comment.pk }}" tabindex="-1" aria-labelledby="deleteCommentModal-{{ comment.pk }}-ModalLabel" aria-hidden="true">
+            <div class="modal fade" id="deleteCommentModal-{{ comment.pk }}" tabindex="-1" aria-labelledby="delteCommentModal-{{ comment.pk }}-ModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">

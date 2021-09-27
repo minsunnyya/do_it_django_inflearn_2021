@@ -13,6 +13,7 @@
 
 <h1>
     Blog
+    {% if search_info %}<small class="text-muted">{{ search_info }}{% endif %}
     {% if category %}
     <span class="badge badge-secondary">{{ category }}</span>
     {% endif %}
