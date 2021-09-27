@@ -77,3 +77,9 @@ class Comment(models.Model):
 
     def is_updated(self):
         return self.updated_at - self.created_at > timedelta(seconds=1)
+
+    def get_avatar_url(self):
+        if self.author.socialaccount_set.exists():
+            return self.author.socialaccount_set.first().get_avatar_url()
+        else:
+            return f'https://doitdjango.com/avatar/id/318/106a9e124d7bd7f4/svg/{self.author.email}'
